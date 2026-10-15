@@ -1,0 +1,8 @@
+[
+ {"Id":"light","Name":"SF-12 Kestrel","Role":"Leichter Jäger","Speed":260,"Turn":1.65,"Hull":140,"Shield":85,"EnergyRegen":30,"Missiles":14,"Torpedoes":0,"Radius":8,"Weapons":["pulse","ion"],"MissileTypes":["dart","hammer"]},
+ {"Id":"medium","Name":"SF-24 Vanguard","Role":"Mittlerer Jäger","Speed":220,"Turn":1.35,"Hull":220,"Shield":125,"EnergyRegen":27,"Missiles":18,"Torpedoes":0,"Radius":10,"Weapons":["pulse","ion","plasma"],"MissileTypes":["dart","hammer"]},
+ {"Id":"bomber","Name":"SB-8 Atlas","Role":"Bomber","Speed":180,"Turn":0.92,"Hull":340,"Shield":190,"EnergyRegen":24,"Missiles":8,"Torpedoes":10,"Radius":13,"Weapons":["pulse","plasma"],"MissileTypes":["torpedo","dart"]},
+ {"Id":"enemy","Name":"Raider Abfangjäger","Role":"Abfangjäger","Speed":205,"Turn":1.25,"Hull":95,"Shield":50,"EnergyRegen":22,"Missiles":4,"Torpedoes":0,"Radius":9,"Weapons":["pulse"],"MissileTypes":["dart"]},
+ {"Id":"carrier","Name":"RNS Tyrant","Role":"Feindlicher Träger","Speed":0,"Turn":0,"Hull":3200,"Shield":900,"EnergyRegen":0,"Missiles":0,"Torpedoes":0,"Radius":155,"Weapons":["pulse"],"MissileTypes":[]},
+ {"Id":"generator","Name":"Schildgenerator","Role":"Träger-Subsystem","Speed":0,"Turn":0,"Hull":180,"Shield":0,"EnergyRegen":0,"Missiles":0,"Torpedoes":0,"Radius":20,"Weapons":[],"MissileTypes":[]}
+]

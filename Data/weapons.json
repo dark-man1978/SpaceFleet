@@ -1,0 +1,8 @@
+[
+ {"Id":"pulse","Name":"Pulslaser","Damage":15,"ShieldMultiplier":1,"Speed":1150,"Cooldown":0.13,"Cost":5,"Life":2.6,"Color":"73e9ff"},
+ {"Id":"ion","Name":"Ionenkanone","Damage":12,"ShieldMultiplier":2.6,"Speed":950,"Cooldown":0.20,"Cost":7,"Life":3.2,"Color":"a998ff"},
+ {"Id":"plasma","Name":"Plasmakanone","Damage":42,"ShieldMultiplier":0.75,"Speed":820,"Cooldown":0.40,"Cost":14,"Life":3.5,"Color":"ffbd70"},
+ {"Id":"dart","Name":"Suchrakete","Damage":95,"ShieldMultiplier":1,"Speed":430,"Cooldown":1.0,"Cost":0,"Life":14,"Color":"ffda90","LockTime":0.8,"Turn":2.7},
+ {"Id":"hammer","Name":"Schwere Rakete","Damage":180,"ShieldMultiplier":1,"Speed":350,"Cooldown":1.8,"Cost":0,"Life":16,"Color":"ff9c58","LockTime":1.5,"Turn":1.9},
+ {"Id":"torpedo","Name":"Torpedo","Damage":820,"ShieldMultiplier":1.4,"Speed":270,"Cooldown":2.8,"Cost":0,"Life":24,"Color":"ff704f","LockTime":3.0,"Turn":0.9}
+]

@@ -1,0 +1,139 @@
+using Godot;
+using System;
+using System.Collections.Generic;
+
+namespace SpaceFleet;
+
+public static class Visuals
+{
+    private static readonly Dictionary<string,StandardMaterial3D> Materials=new();
+    public static void ClearCache(){foreach(var m in Materials.Values)m.Dispose();Materials.Clear();}
+    public static StandardMaterial3D Material(string color,bool glow=false,float metallic=0.65f)
+    {
+        string key=color+glow+metallic;
+        if(Materials.TryGetValue(key,out var existing)) return existing;
+        var c=new Color(color);
+        var m=new StandardMaterial3D { AlbedoColor=c, Metallic=metallic, Roughness=0.48f };
+        if(glow){m.ShadingMode=BaseMaterial3D.ShadingModeEnum.Unshaded;m.EmissionEnabled=true;m.Emission=c;m.EmissionEnergyMultiplier=2;}
+        Materials[key]=m; return m;
+    }
+    public static MeshInstance3D Mesh(Node3D parent,Mesh mesh,Vector3 pos,string color,bool glow=false)
+    {
+        var n=new MeshInstance3D { Mesh=mesh,Position=pos,MaterialOverride=Material(color,glow) };
+        parent.AddChild(n);return n;
+    }
+    public static MeshInstance3D Box(Node3D parent,Vector3 size,Vector3 pos,string color,bool glow=false)
+        => Mesh(parent,new BoxMesh { Size=size },pos,color,glow);
+    public static MeshInstance3D Ball(Node3D parent,float radius,Vector3 pos,string color,bool glow=false)
+        => Mesh(parent,new SphereMesh { Radius=radius,Height=radius*2,RadialSegments=16,Rings=8 },pos,color,glow);
+    public static MeshInstance3D Beam(Node3D parent,Vector3 a,Vector3 b,float width,string color,bool glow=false)
+    {
+        var node=Box(parent,new Vector3(width,width,a.DistanceTo(b)),(a+b)*0.5f,color,glow);
+        if(a.DistanceSquaredTo(b)>0.001f) node.LookAtFromPosition((a+b)*0.5f,b,Mathf.Abs((b-a).Normalized().Dot(Vector3.Up))>0.98f?Vector3.Right:Vector3.Up);
+        return node;
+    }
+    // A six-faced tapered hull, built from vertices rather than external model assets.
+    public static void Wedge(Node3D parent,Vector3 pos,Vector3 size,string color)
+    {
+        Vector3[] v={new(-.25f,-.22f,-.5f),new(.25f,-.22f,-.5f),new(.25f,.12f,-.5f),new(-.25f,.12f,-.5f),
+            new(-.5f,-.5f,.5f),new(.5f,-.5f,.5f),new(.5f,.5f,.5f),new(-.5f,.5f,.5f)};
+        int[] faces={0,2,1,0,3,2,4,5,6,4,6,7,0,4,7,0,7,3,1,2,6,1,6,5,3,7,6,3,6,2,0,1,5,0,5,4};
+        var st=new SurfaceTool(); st.Begin(Godot.Mesh.PrimitiveType.Triangles);
+        foreach(int i in faces) st.AddVertex(v[i]*size);
+        st.GenerateNormals(); Mesh(parent,st.Commit(),pos,color);
+    }
+    public static Node3D Fighter(Node3D parent,string type,bool enemy)
+    {
+        var root=new Node3D();parent.AddChild(root);
+        string armor=enemy?"633947":"82939d", dark="182630", trim=enemy?"ff6c51":"6be9ee";
+        float wing=type=="bomber"?24:type=="light"?15:19;
+        Wedge(root,Vector3.Zero,new Vector3(8,5,23),armor);
+        Wedge(root,new Vector3(0,2,-2),new Vector3(4,3,10),"163644");
+        for(int i=-1;i<=1;i+=2)
+        {
+            var w=Box(root,new Vector3(wing/2,0.8f,10),new Vector3(i*wing/3,0,3),armor);w.RotationDegrees=new Vector3(0,i*12,-i*7);
+            Wedge(root,new Vector3(i*wing/2,1,5),new Vector3(3,4,12),dark);
+            Ball(root,1.1f,new Vector3(i*wing/2,0.8f,11),trim,true);
+            Box(root,new Vector3(.7f,.6f,8),new Vector3(i*6,-1,-7),dark);
+            Box(root,new Vector3(1,.1f,6),new Vector3(i*5,2,2),trim,true);
+            if(type=="bomber") Box(root,new Vector3(4,3,12),new Vector3(i*7,-3,2),"465963");
+        }
+        return root;
+    }
+    public static Node3D Carrier(Node3D parent,bool enemy)
+    {
+        var root=new Node3D(); parent.AddChild(root);
+        string armor=enemy?"483440":"526571",dark="17202c",glow=enemy?"ff7257":"67d9e9";
+        Wedge(root,new Vector3(0,-20,0),new Vector3(150,80,580),armor);
+        Box(root,new Vector3(104,5,490),new Vector3(0,25,-5),dark);
+        for(int i=-1;i<=1;i+=2)
+        {
+            Wedge(root,new Vector3(i*81,9,35),new Vector3(35,70,460),armor);
+            Box(root,new Vector3(3,2,440),new Vector3(i*45,29,0),glow,true);
+            for(int j=0;j<8;j++)
+            {
+                Box(root,new Vector3(9,.5f,11),new Vector3(i*35,29,-180+j*50),"e1ddbc",true);
+                Box(root,new Vector3(14,8,24),new Vector3(i*105,15,-180+j*50),dark);
+            }
+            Box(root,new Vector3(23,15,22),new Vector3(i*45,-15,275),glow,true);
+        }
+        Wedge(root,new Vector3(65,69,90),new Vector3(54,75,100),armor);
+        Box(root,new Vector3(42,5,11),new Vector3(65,91,42),glow,true);
+        Box(root,new Vector3(3,45,3),new Vector3(70,125,100),dark);
+        Box(root,new Vector3(52,38,8),new Vector3(0,8,245),"080f18");
+        return root;
+    }
+    public static Node3D Cockpit(Node3D player)
+    {
+        var root=new Node3D();player.AddChild(root);
+        // Camera is at the origin and looks along -Z. Thin struts leave the combat view clear.
+        Beam(root,new Vector3(-.80f,-.7f,-.8f),new Vector3(-.63f,.66f,-1.0f),.055f,"24323d");
+        Beam(root,new Vector3(.80f,-.7f,-.8f),new Vector3(.63f,.66f,-1.0f),.055f,"24323d");
+        Beam(root,new Vector3(-.63f,.66f,-1),new Vector3(.63f,.66f,-1),.045f,"344550");
+        Box(root,new Vector3(1.85f,.32f,.6f),new Vector3(0,-.77f,-1.03f),"18232f");
+        Box(root,new Vector3(.40f,.08f,.35f),new Vector3(0,-.56f,-1.18f),"314654");
+        for(int i=-1;i<=1;i+=2)
+        {
+            Box(root,new Vector3(.42f,.05f,.02f),new Vector3(i*.55f,-.58f,-1.32f),"52b6bf",true);
+            for(int j=0;j<5;j++) Box(root,new Vector3(.025f,.025f,.02f),new Vector3(i*.55f+j*.04f,-.65f,-1.34f),j==0?"ffb568":"69c7d4",true);
+        }
+        return root;
+    }
+    public static void Universe(Node3D root,int seed)
+    {
+        var env=new WorldEnvironment();root.AddChild(env);
+        env.Environment=new Godot.Environment { BackgroundMode=Godot.Environment.BGMode.Color,
+            BackgroundColor=new Color("030611"),AmbientLightSource=Godot.Environment.AmbientSource.Color,
+            AmbientLightColor=new Color("7f99be"),AmbientLightEnergy=.65f,TonemapMode=Godot.Environment.ToneMapper.Filmic };
+        var sun=new DirectionalLight3D { LightColor=new Color("d5e5ff"),LightEnergy=1.6f,RotationDegrees=new Vector3(-32,-35,0),ShadowEnabled=false };root.AddChild(sun);
+        var rim=new DirectionalLight3D { LightColor=new Color("b27055"),LightEnergy=.65f,RotationDegrees=new Vector3(40,160,0) };root.AddChild(rim);
+        var random=new Random(seed);
+        var mm=new MultiMesh { TransformFormat=MultiMesh.TransformFormatEnum.Transform3D,
+            Mesh=new SphereMesh { Radius=25,Height=50,RadialSegments=4,Rings=3 },InstanceCount=2800 };
+        for(int i=0;i<mm.InstanceCount;i++)
+        {
+            var v=new Vector3((float)random.NextDouble()*2-1,(float)random.NextDouble()*2-1,(float)random.NextDouble()*2-1).Normalized();
+            float scale=(float)random.NextDouble()*1.8f+.4f;
+            mm.SetInstanceTransform(i,new Transform3D(Basis.Identity.Scaled(Vector3.One*scale),v*65000));
+        }
+        root.AddChild(new MultiMeshInstance3D { Multimesh=mm,MaterialOverride=Material("abbcd1",true) });
+        var planet=Ball(root,7000,new Vector3(14000,-8500,-33000),"435e76");
+        planet.Mesh=new SphereMesh { Radius=7000,Height=14000,RadialSegments=64,Rings=32 };
+        // Broad surface bands and atmospheric rim, procedural and lightweight.
+        var shader=new Shader { Code=@"shader_type spatial;
+render_mode cull_back;
+uniform vec4 ocean : source_color = vec4(0.13,0.24,0.32,1.0);
+varying vec3 object_position;
+void vertex(){object_position=VERTEX;}
+void fragment(){
+float bands=sin(object_position.y*0.003+sin(object_position.x*0.0018)*3.0);
+float land=sin(object_position.x*0.0012)*cos(object_position.z*0.0014)+sin(object_position.y*0.002);
+ALBEDO=mix(ocean.rgb,vec3(0.33,0.40,0.36),smoothstep(0.1,0.6,land));
+ALBEDO=mix(ALBEDO,vec3(0.68,0.74,0.78),smoothstep(0.82,0.98,bands)*0.65);
+ROUGHNESS=1.0;
+}" };
+        planet.MaterialOverride=new ShaderMaterial { Shader=shader };
+        var moon=Ball(root,2100,new Vector3(-19000,11000,-45000),"77777e");
+        moon.Mesh=new SphereMesh { Radius=2100,Height=4200,RadialSegments=32,Rings=16 };
+    }
+}
