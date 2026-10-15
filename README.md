@@ -1,10 +1,23 @@
-# SPACE FLEET — Prototyp 0.1
+# SPACE FLEET — Prototyp 0.2 / Flotte A
 
 Ein Einzelspieler-Weltraumkampfspiel in Godot 4.5 mit C#, ausgelegt auf Steam Deck / SteamOS (Linux x86_64) und normale Gamepads. Eigene Schiffe und Spielwelt, inspiriert von klassischen Träger-basierten Raumkampfsimulationen.
 
 Dieses Projekt und seine prozeduralen Modelle wurden mit KI-Unterstützung erstellt. Der Quellcode steht unter der [MIT-Lizenz](LICENSE).
 
-![Cockpit und Zielcomputer](docs/screenshots/flight.png)
+## Neu in Version 0.2
+
+Der gewählte Stil **A – Flotte** ist als erster Grafikschritt eingebaut:
+
+- SF-12 Kestrel mit eigenem GLB-Modell: facettierter Rumpf, gepfeilte Flügel, Doppeltriebwerke, Kanzelrahmen und dezente gelbe Flottenmarkierungen.
+- Neues gemeinsames Flotten-Cockpit für alle drei spielbaren Klassen: schmalere Streben, modellierte Displayfassungen, Schalter und Drehregler.
+- Ruhigere blau-weiße Instrumente; Schub und Flügelstatus sind oberhalb der mechanischen Konsolen angeordnet.
+- Das Cockpit bleibt auch beim Nachbrenner-FOV-Effekt auf die Instrumente ausgerichtet.
+
+Zum Testen des neuen Außenmodells **Bombereskorte / Kestrel** auswählen. In den anderen Missionen fliegen bereits verbündete Kestrel-Jäger mit. Die restlichen Außenmodelle werden erst nach deinem Steam-Deck-Test überarbeitet. Flugverhalten, Waffenwerte und Missionsregeln bleiben erhalten.
+
+![Kestrel – echte Spielgrafik](docs/screenshots/fleet-model.png)
+
+![Flotten-Cockpit – echte Spielgrafik](docs/screenshots/fleet-cockpit.png)
 
 ![Missionsbesprechung](docs/screenshots/briefing.png)
 
@@ -146,7 +159,7 @@ Die integrierten Prüfungen kontrollieren unter anderem 300 generierte Missionen
 
 ## Stand und Grenzen
 
-Spielbarer Prototyp mit eigenem C#-Quellcode und nativem Linux-Build. Modelle und Cockpit bestehen aus einfachen prozeduralen 3D-Formen mit Beleuchtung; sie sind Platzhalter für spätere moderne Assets. Textfunk und synthetisierte Effekte sind vorhanden, Sprachausgabe und Musik noch nicht. Trefferkörper sind vereinfachte Kugeln; Torpedoabwehr und Schadensmodell sind bewusst kompakt. Kein Multiplayer, keine Kampagne und kein kommerziell fertiges Balancing.
+Spielbarer Prototyp mit eigenem C#-Quellcode und nativem Linux-Build. Kestrel und Cockpit verwenden eigene GLB-Modelle im Flottenstil. Bomber, mittlerer Jäger, Gegner und Träger verwenden weiterhin die bisherigen prozeduralen Außenmodelle. Der gewählte Entwurf dient als Stilrichtung; diese erste Umsetzung erreicht noch nicht alle Details der Konzeptgrafik. Textfunk und synthetisierte Effekte sind vorhanden, Sprachausgabe und Musik noch nicht. Trefferkörper sind vereinfachte Kugeln; Torpedoabwehr und Schadensmodell sind bewusst kompakt. Kein Multiplayer, keine Kampagne und kein kommerziell fertiges Balancing.
 
 Das Projekt zielt auf Steam Deck. Die Bildrate, reale Controllerbedienung und das Verhalten im Steam-Gaming-Modus müssen auf einem echten Steam Deck geprüft werden; eine Hardwareprüfung ist nicht Teil dieser Ausgabe.
 
@@ -161,6 +174,17 @@ Der eigene Quellcode und die prozeduralen Inhalte stehen unter der [MIT-Lizenz](
 
 ## Automatische GitHub-Releases
 
-Der Workflow unter `.github/workflows/release.yml` baut nach dem ersten Push auf `main` die Version `v0.1.0`, führt die integrierten Tests aus und veröffentlicht das native Steam-Deck-Spiel als ZIP-Anhang eines GitHub-Releases. Vorhandene Releases werden nicht überschrieben. Weitere Versionen können über „Actions → Build and publish Steam Deck release → Run workflow“ mit einem neuen Tag erstellt werden.
+Der Workflow unter `.github/workflows/release.yml` baut nach dem ersten Push auf `main` die Version `v0.2.0`, führt die integrierten Tests aus und veröffentlicht das native Steam-Deck-Spiel als ZIP-Anhang eines GitHub-Releases. Vorhandene Releases werden nicht überschrieben. Weitere Versionen können über „Actions → Build and publish Steam Deck release → Run workflow“ mit einem neuen Tag erstellt werden.
 
 Der Workflow ist vorbereitet; der erste GitHub-Actions-Lauf steht bis zur Repository-Erstellung und dem Upload aus.
+
+### Grafikmodelle neu erzeugen
+
+Die fertigen GLB-Dateien sind eingecheckt; für normales Bauen und Spielen sind keine zusätzlichen Python-Pakete erforderlich. Die reproduzierbare Geometriequelle liegt unter `Tools/build_fleet_assets.py`:
+
+```bash
+python3 -m pip install numpy scipy
+python3 Tools/build_fleet_assets.py
+```
+
+Alle Geometrien sind selbst erstellt und stehen unter MIT. Der Jäger umfasst 4.722 Dreiecke in 12 Materialflächen; das Cockpit 4.308 Dreiecke in 9 Materialflächen. Keine externen Modelle oder Bildtexturen werden nachgeladen. Die tatsächliche Bildrate wird auf dem Steam Deck geprüft.

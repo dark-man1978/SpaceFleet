@@ -42,8 +42,16 @@ public static class Visuals
         foreach(int i in faces) st.AddVertex(v[i]*size);
         st.GenerateNormals(); Mesh(parent,st.Commit(),pos,color);
     }
+    private static Node3D ImportedModel(Node3D parent,string path,string name)
+    {
+        var scene=GD.Load<PackedScene>(path);
+        if(scene==null)throw new InvalidOperationException($"Fleet model missing: {path}");
+        var model=scene.Instantiate<Node3D>();model.Name=name;parent.AddChild(model);return model;
+    }
     public static Node3D Fighter(Node3D parent,string type,bool enemy)
     {
+        if(type=="light"&&!enemy)
+            return ImportedModel(parent,"res://Assets/Models/kestrel_fleet_a.glb","KestrelFleetA");
         var root=new Node3D();parent.AddChild(root);
         string armor=enemy?"633947":"82939d", dark="182630", trim=enemy?"ff6c51":"6be9ee";
         float wing=type=="bomber"?24:type=="light"?15:19;
@@ -84,21 +92,7 @@ public static class Visuals
         return root;
     }
     public static Node3D Cockpit(Node3D player)
-    {
-        var root=new Node3D();player.AddChild(root);
-        // Camera is at the origin and looks along -Z. Thin struts leave the combat view clear.
-        Beam(root,new Vector3(-.80f,-.7f,-.8f),new Vector3(-.63f,.66f,-1.0f),.055f,"24323d");
-        Beam(root,new Vector3(.80f,-.7f,-.8f),new Vector3(.63f,.66f,-1.0f),.055f,"24323d");
-        Beam(root,new Vector3(-.63f,.66f,-1),new Vector3(.63f,.66f,-1),.045f,"344550");
-        Box(root,new Vector3(1.85f,.32f,.6f),new Vector3(0,-.77f,-1.03f),"18232f");
-        Box(root,new Vector3(.40f,.08f,.35f),new Vector3(0,-.56f,-1.18f),"314654");
-        for(int i=-1;i<=1;i+=2)
-        {
-            Box(root,new Vector3(.42f,.05f,.02f),new Vector3(i*.55f,-.58f,-1.32f),"52b6bf",true);
-            for(int j=0;j<5;j++) Box(root,new Vector3(.025f,.025f,.02f),new Vector3(i*.55f+j*.04f,-.65f,-1.34f),j==0?"ffb568":"69c7d4",true);
-        }
-        return root;
-    }
+        =>ImportedModel(player,"res://Assets/Models/cockpit_fleet_a.glb","FleetCockpit");
     public static void Universe(Node3D root,int seed)
     {
         var env=new WorldEnvironment();root.AddChild(env);

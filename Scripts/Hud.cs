@@ -10,7 +10,7 @@ public partial class Hud : Control
     public Game Game=null!;
     private Control? menu;
     private readonly Font font=ThemeDB.FallbackFont;
-    private readonly Color ink=new("d4e8eb"), cyan=new("78d9e4"), dim=new("819ba9"), red=new("ff806d"), gold=new("f2c184"), green=new("9ad8b5");
+    private readonly Color ink=new("dfe6e8"), cyan=new("a8c4d7"), dim=new("98acb9"), red=new("ff806d"), gold=new("f2c184"), green=new("9ad8b5");
     private string screen="menu";
     public override void _Ready(){SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);MouseFilter=MouseFilterEnum.Ignore;}
     public void ClearMenu()
@@ -85,9 +85,16 @@ public partial class Hud : Control
     private void Line(Vector2 a,Vector2 b,Color c,float width=1)=>DrawLine(a,b,c,width,true);
     private void Panel(float x,float y,float w,float h,string title)
     {
-        DrawRect(new Rect2(x,y,w,h),new Color(.02f,.045f,.075f,.88f));
+        bool instrument=Game.Phase==GamePhase.Flight&&y>=600;
+        DrawRect(new Rect2(x,y,w,h),instrument?new Color(.018f,.033f,.047f,.87f):new Color(.02f,.045f,.075f,.92f));
         DrawRect(new Rect2(x,y,w,h),new Color(.20f,.35f,.40f,.85f),false,1);
-        DrawRect(new Rect2(x,y,3,20),cyan);Text(x+13,y+22,title,15,dim);
+        DrawRect(new Rect2(x,y,3,20),gold);Text(x+13,y+22,title,15,dim);
+        if(instrument)
+        {
+            Line(new Vector2(x+10,y+31),new Vector2(x+w-10,y+31),new Color(.35f,.45f,.52f,.55f));
+            foreach(float sx in new[]{x+5,x+w-5})foreach(float sy in new[]{y+5,y+h-5})
+            {DrawCircle(new Vector2(sx,sy),2,new Color("69737a"));Line(new Vector2(sx-1,sy),new Vector2(sx+1,sy),new Color("192029"));}
+        }
     }
     private void Bar(float x,float y,float w,float fraction,Color color,string label)
     {
@@ -113,7 +120,7 @@ public partial class Hud : Control
         Text(70,67,"SFS RESOLUTE  /  FLUGDECK 07",16,cyan);
         Text(70,140,"SPACE FLEET",56);
         Text(73,178,"GRENZSEKTOR  /  2186",18,dim);
-        Text(70,765,"STEAM DECK  •  COCKPIT COMBAT  •  PROTOTYP 0.1",14,dim);
+        Text(70,765,"STEAM DECK  •  COCKPIT COMBAT  •  PROTOTYP 0.2 / FLOTTE A",14,dim);
         if(screen=="menu")
         {
             Text(70,220,"WÄHLE DEINEN EINSATZ",16,gold);
@@ -240,9 +247,9 @@ public partial class Hud : Control
             Text(836,758,target.Friendly?"VERBÜNDETER KONTAKT":"FEINDLICHER KONTAKT",14,target.Friendly?green:red);
         }
         else {Text(836,655,"KEIN ZIEL AUSGEWÄHLT",21,dim);Text(836,694,"A: Im Visier    X: Nächster Feind",17,cyan);}
-        Text(35,565,$"SCHUB {p.Throttle*100:0}%   {p.Speed:0} m/s",18);
-        Text(35,588,$"NACHBRENNER {p.BoostCharge:0}%",13,dim);
-        Text(925,562,$"FLÜGEL: {Game.WingOrder}",16,dim);
+        Text(35,98,$"SCHUB {p.Throttle*100:0}%   {p.Speed:0} m/s",18);
+        Text(35,120,$"NACHBRENNER {p.BoostCharge:0}%",13,dim);
+        Text(1030,98,$"FLÜGEL: {Game.WingOrder}",16,dim);
         if(Game.Cruise)Text(500,110,"REISEFLUG ×5  /  R3 BEENDEN",20,gold);
         else if(Game.NearestOpponent(p,4200)==null)Text(450,111,"R3: REISEFLUG    /    Y: NAVIGATION",15,dim);
         if(Game.Shots.Exists(s=>s.Alive&&s.Homing&&s.Target==p))Text(490,160,"WARNUNG: RAKETENANFLUG",24,red);

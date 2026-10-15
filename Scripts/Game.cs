@@ -143,6 +143,9 @@ public partial class Game : Node3D
         TickMission(dt);
         Camera.GlobalTransform=Player.GlobalTransform;
         Camera.Fov=Mathf.Lerp(Camera.Fov,Input.IsActionPressed("boost")?87:80,dt*3);
+        // Keep physical instrument bezels aligned with the HUD during the boost FOV effect.
+        float cockpitFov=Mathf.Tan(Mathf.DegToRad(Camera.Fov*.5f))/Mathf.Tan(Mathf.DegToRad(40));
+        cockpit.Scale=new Vector3(cockpitFov,cockpitFov,1);
         Sound.Engine=Player.Speed/(Player.Spec.Speed*1.85f);
         if(Player.Target is {Alive:true} && Player.Lock>=Database.Weapons[Player.MissileId].LockTime)
         {
@@ -389,23 +392,36 @@ public partial class Game : Node3D
         TickMission(.01f);Check(Phase==GamePhase.Debrief&&!Success,"escort failure");
         Check(InputMap.ActionGetEvents("fire").Any(e=>e is InputEventJoypadMotion m&&m.Axis==JoyAxis.TriggerLeft),"controller trigger binding");
         Check(InputMap.ActionGetEvents("warhead").Any(e=>e is InputEventJoypadButton b&&b.ButtonIndex==JoyButton.RightShoulder),"controller shoulder binding");
+        Check(ResourceLoader.Exists("res://Assets/Models/kestrel_fleet_a.glb"),"fleet fighter imported");
+        Check(ResourceLoader.Exists("res://Assets/Models/cockpit_fleet_a.glb"),"fleet cockpit imported");
+        var fleet=Spawn("light",true,new Vector3(100,0,-100));
+        Check(fleet.Model!=null&&fleet.Model.Name=="KestrelFleetA","fighter uses new GLB scene");
+        Check(cockpit.Name=="FleetCockpit","cockpit uses new GLB scene");
         GD.Print($"SELF TEST PASS: {checks} checks");GetTree().Quit(0);
     }
     private async void CaptureQa(string mode)
     {
         if(mode!="menu")
         {
-            Prepare(MissionKind.Strike,651);
+            Prepare(mode.StartsWith("fleet")?MissionKind.Escort:MissionKind.Strike,651);
             if(mode!="briefing")
             {
                 StartLaunch();
-                if(mode=="flight")
+                if(mode=="flight"||mode=="fleet-cockpit")
                 {
                     Phase=GamePhase.Flight;Paused=true;Player.Model!.Visible=false;cockpit.Visible=true;
                     NavIndex=Plan!.Points.Count-1;
                     Player.GlobalPosition=Plan.Points[NavIndex].Position+new Vector3(0,95,350);
                     Activate(Plan.Points[NavIndex]);Player.Target=EnemyCarrier;Player.Lock=3;
                     Camera.GlobalTransform=Player.GlobalTransform;
+                }
+                if(mode=="fleet-model")
+                {
+                    Paused=true;cockpit.Visible=false;Hud.ClearMenu();Phase=GamePhase.Launch;
+                    Player.GlobalPosition=new Vector3(0,0,-2000);Player.Basis=Basis.Identity;
+                    Camera.Fov=45;
+                    Camera.GlobalPosition=Player.GlobalPosition+new Vector3(19,12,-24);
+                    Camera.LookAt(Player.GlobalPosition+new Vector3(0,0,-1));
                 }
             }
         }
