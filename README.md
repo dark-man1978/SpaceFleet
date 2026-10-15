@@ -1,8 +1,14 @@
 # SPACE FLEET — Prototyp 0.2 / Flotte A
 
+> **KI-generiertes Spiel / AI-generated game**
+>
+> Space Fleet wurde mit ChatGPT / OpenAI Codex nach menschlichen Vorgaben erstellt. Quellcode, prozedurale 3D-Modelle und Projektdokumentation wurden mithilfe generativer KI erzeugt und überarbeitet. Spielidee, Anforderungen und Rückmeldungen stammen vom Projektinhaber.
+>
+> Space Fleet was created with ChatGPT / OpenAI Codex from human-provided requirements. Its source code, procedural 3D models and project documentation were generated and revised using generative AI. The project owner provides the game concept, requirements and feedback.
+
 Ein Einzelspieler-Weltraumkampfspiel in Godot 4.5 mit C#, ausgelegt auf Steam Deck / SteamOS (Linux x86_64) und normale Gamepads. Eigene Schiffe und Spielwelt, inspiriert von klassischen Träger-basierten Raumkampfsimulationen.
 
-Dieses Projekt und seine prozeduralen Modelle wurden mit KI-Unterstützung erstellt. Der Quellcode steht unter der [MIT-Lizenz](LICENSE).
+Der Quellcode steht unter der [MIT-Lizenz](LICENSE).
 
 ## Neu in Version 0.2
 
