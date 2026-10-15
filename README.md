@@ -1,4 +1,4 @@
-# SPACE FLEET — Prototyp 0.2 / Flotte A
+# SPACE FLEET — Prototyp 0.3 / Flotte A
 
 > **KI-generiertes Spiel / AI-generated game**
 >
@@ -10,22 +10,31 @@ Ein Einzelspieler-Weltraumkampfspiel in Godot 4.5 mit C#, ausgelegt auf Steam De
 
 Der Quellcode steht unter der [MIT-Lizenz](LICENSE).
 
-## Neu in Version 0.2
+## Neu in Version 0.3
 
-Der gewählte Stil **A – Flotte** ist als erster Grafikschritt eingebaut:
+Die Flotte hat jetzt einheitliche GLB-Außenmodelle für **alle drei Spielerschiffe, den Raider-Abfangjäger und beide Träger**. Das Cockpit aus Version 0.2 bleibt erhalten.
 
-- SF-12 Kestrel mit eigenem GLB-Modell: facettierter Rumpf, gepfeilte Flügel, Doppeltriebwerke, Kanzelrahmen und dezente gelbe Flottenmarkierungen.
-- Neues gemeinsames Flotten-Cockpit für alle drei spielbaren Klassen: schmalere Streben, modellierte Displayfassungen, Schalter und Drehregler.
-- Ruhigere blau-weiße Instrumente; Schub und Flügelstatus sind oberhalb der mechanischen Konsolen angeordnet.
-- Das Cockpit bleibt auch beim Nachbrenner-FOV-Effekt auf die Instrumente ausgerichtet.
+- **SF-24 Vanguard:** breite Diamantflügel, integrierte Triebwerke und zentraler Stabilisator.
+- **SB-8 Atlas:** schwere Doppeltriebwerke, gepanzerte Torpedoschächte und breite Tragflächen.
+- **Raider:** vorwärts gepfeilte Flügel, nach unten gezogene Finnen und warme Feindmarkierungen.
+- **SFS Resolute:** offenes Flugdeck mit Leitmarkierungen, segmentierte Seitenpanzerung, Geschütztürme und Kommandobrücke.
+- **RNS Tyrant:** verlängerte Bugpanzerung, seitliche Panzerflügel, rote Positionslichter und Sockel für die weiterhin separat anvisierbaren Schildgeneratoren.
 
-Zum Testen des neuen Außenmodells **Bombereskorte / Kestrel** auswählen. In den anderen Missionen fliegen bereits verbündete Kestrel-Jäger mit. Die restlichen Außenmodelle werden erst nach deinem Steam-Deck-Test überarbeitet. Flugverhalten, Waffenwerte und Missionsregeln bleiben erhalten.
+Die Modelle werden ohne externe Bildtexturen geladen. Zusammengefasste Materialflächen begrenzen die Zahl der Zeichenaufrufe. Waffenwerte, Flugverhalten und Missionsregeln bleiben erhalten. Die tatsächliche Bildrate muss auf dem Steam Deck geprüft werden.
 
-![Kestrel – echte Spielgrafik](docs/screenshots/fleet-model.png)
+### Echte Spielgrafik
 
-![Flotten-Cockpit – echte Spielgrafik](docs/screenshots/fleet-cockpit.png)
+![Vanguard – Version 0.3](docs/screenshots/fleet-vanguard.png)
 
-![Missionsbesprechung](docs/screenshots/briefing.png)
+![Atlas – Version 0.3](docs/screenshots/fleet-atlas.png)
+
+![Raider – Version 0.3](docs/screenshots/fleet-raider.png)
+
+![SFS Resolute – Version 0.3](docs/screenshots/fleet-resolute.png)
+
+![RNS Tyrant – Version 0.3](docs/screenshots/fleet-tyrant.png)
+
+![Flotten-Cockpit – Version 0.3](docs/screenshots/fleet-cockpit.png)
 
 ## Sofort spielen auf dem Steam Deck
 
@@ -143,12 +152,12 @@ Je nach Installation heißt das Godot-Programm `godot`, `godot4` oder entspreche
 | `Scripts/Projectile.cs` | Lenkwaffen und kontinuierliche Trefferprüfung |
 | `Scripts/Controls.cs` | Gamepad- und Tastaturbelegung, Stick-Totzone |
 | `Scripts/Hud.cs` | Controller-Menüs, Briefing, Radar, Zielcomputer, Auswertung |
-| `Scripts/Visuals.cs` | Prozedurale 3D-Modelle, Cockpit, Planeten und Sterne |
+| `Scripts/Visuals.cs` | GLB-Schiffsmodelle und Cockpit, prozedurale Planeten und Sterne |
 | `Scripts/SoundSynth.cs` | Synthetisierte Waffen-, Triebwerks- und Warnsignale |
 | `Data/ships.json` | Schiffsattribute und Ausrüstung |
 | `Data/weapons.json` | Waffenattribute und Raketeneigenschaften |
 
-Balancing lässt sich direkt in den JSON-Dateien ändern. Neue Schiffs-IDs benötigen außerdem eine Auswahl in Missionsgenerator bzw. Spawner; das prozedurale Erscheinungsbild kann in `Visuals` angepasst oder durch eigene GLB-Modelle ersetzt werden. Neue Begegnungstypen werden in `Encounter`, `MissionPlan.Generate` und `Game.Activate` ergänzt.
+Balancing lässt sich direkt in den JSON-Dateien ändern. Neue Schiffs-IDs benötigen außerdem eine Auswahl in Missionsgenerator bzw. Spawner; das Erscheinungsbild wird in `Visuals.Fighter` einer GLB-Datei zugeordnet. Neue Begegnungstypen werden in `Encounter`, `MissionPlan.Generate` und `Game.Activate` ergänzt.
 
 Spielprofil: Godots `user://pilot.cfg`, unter SteamOS gewöhnlich `~/.local/share/godot/app_userdata/Space Fleet/pilot.cfg`. Gespeichert werden Optionen und Bestleistungen; laufende Missionen werden nicht zwischengespeichert.
 
@@ -165,7 +174,7 @@ Die integrierten Prüfungen kontrollieren unter anderem 300 generierte Missionen
 
 ## Stand und Grenzen
 
-Spielbarer Prototyp mit eigenem C#-Quellcode und nativem Linux-Build. Kestrel und Cockpit verwenden eigene GLB-Modelle im Flottenstil. Bomber, mittlerer Jäger, Gegner und Träger verwenden weiterhin die bisherigen prozeduralen Außenmodelle. Der gewählte Entwurf dient als Stilrichtung; diese erste Umsetzung erreicht noch nicht alle Details der Konzeptgrafik. Textfunk und synthetisierte Effekte sind vorhanden, Sprachausgabe und Musik noch nicht. Trefferkörper sind vereinfachte Kugeln; Torpedoabwehr und Schadensmodell sind bewusst kompakt. Kein Multiplayer, keine Kampagne und kein kommerziell fertiges Balancing.
+Spielbarer, KI-generierter Prototyp mit C#-Quellcode und nativem Linux-Build. Alle Schiffsklassen und beide Träger verwenden eigene, prozedural erzeugte GLB-Modelle im Flottenstil. Das gemeinsame Cockpit ist für alle drei Spielerklassen ausgelegt. Textfunk und synthetisierte Effekte sind vorhanden, Sprachausgabe und Musik noch nicht. Trefferkörper bleiben vereinfachte Kugeln; die neuen sichtbaren Geschütztürme sind Teil des Modells, die automatische Abwehr arbeitet mit der bisherigen vereinfachten Gefechtslogik. Kein Multiplayer und keine Kampagne.
 
 Das Projekt zielt auf Steam Deck. Die Bildrate, reale Controllerbedienung und das Verhalten im Steam-Gaming-Modus müssen auf einem echten Steam Deck geprüft werden; eine Hardwareprüfung ist nicht Teil dieser Ausgabe.
 
@@ -180,9 +189,9 @@ Der eigene Quellcode und die prozeduralen Inhalte stehen unter der [MIT-Lizenz](
 
 ## Automatische GitHub-Releases
 
-Der Workflow unter `.github/workflows/release.yml` baut nach dem ersten Push auf `main` die Version `v0.2.0`, führt die integrierten Tests aus und veröffentlicht das native Steam-Deck-Spiel als ZIP-Anhang eines GitHub-Releases. Vorhandene Releases werden nicht überschrieben. Weitere Versionen können über „Actions → Build and publish Steam Deck release → Run workflow“ mit einem neuen Tag erstellt werden.
+Der bestehende Workflow unter `.github/workflows/release.yml` bleibt unverändert. Neue Versionen werden über „Actions → Build and publish Steam Deck release → Run workflow“ mit dem passenden neuen Tag, für diese Ausgabe `v0.3.0`, gebaut und veröffentlicht. Dabei führt er die integrierten Tests aus und stellt das native Steam-Deck-Spiel als ZIP-Anhang bereit. Vorhandene Releases werden nicht überschrieben.
 
-Der Workflow ist vorbereitet; der erste GitHub-Actions-Lauf steht bis zur Repository-Erstellung und dem Upload aus.
+Frühere Releases bleiben verfügbar. Der Workflow führt vor jeder neuen Veröffentlichung die Spielprüfungen sowohl im Quellprojekt als auch in der exportierten Linux-Anwendung aus.
 
 ### Grafikmodelle neu erzeugen
 
@@ -193,4 +202,16 @@ python3 -m pip install numpy scipy
 python3 Tools/build_fleet_assets.py
 ```
 
-Alle Geometrien sind selbst erstellt und stehen unter MIT. Der Jäger umfasst 4.722 Dreiecke in 12 Materialflächen; das Cockpit 4.308 Dreiecke in 9 Materialflächen. Keine externen Modelle oder Bildtexturen werden nachgeladen. Die tatsächliche Bildrate wird auf dem Steam Deck geprüft.
+Alle Geometrien werden durch den KI-generierten Projektcode erzeugt und stehen unter MIT. Keine externen Modelle oder Bildtexturen werden nachgeladen.
+
+| Modell | Dreiecke | Materialflächen |
+| --- | ---: | ---: |
+| Kestrel | 4.722 | 12 |
+| Vanguard | 2.724 | 10 |
+| Atlas | 3.224 | 9 |
+| Raider | 1.554 | 8 |
+| Resolute | 9.996 | 8 |
+| Tyrant | 10.488 | 7 |
+| Cockpit | 4.308 | 9 |
+
+`python3 Tools/check_fleet_assets.py` prüft alle sieben GLB-Dateien auf gültige Daten, endliche Koordinaten, Normalen, Geometrie-/Materialbudgets und den freien Startkorridor der Resolute. Für diese Prüfung wird nur Python 3 benötigt.

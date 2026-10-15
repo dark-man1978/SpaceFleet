@@ -50,47 +50,17 @@ public static class Visuals
     }
     public static Node3D Fighter(Node3D parent,string type,bool enemy)
     {
-        if(type=="light"&&!enemy)
-            return ImportedModel(parent,"res://Assets/Models/kestrel_fleet_a.glb","KestrelFleetA");
-        var root=new Node3D();parent.AddChild(root);
-        string armor=enemy?"633947":"82939d", dark="182630", trim=enemy?"ff6c51":"6be9ee";
-        float wing=type=="bomber"?24:type=="light"?15:19;
-        Wedge(root,Vector3.Zero,new Vector3(8,5,23),armor);
-        Wedge(root,new Vector3(0,2,-2),new Vector3(4,3,10),"163644");
-        for(int i=-1;i<=1;i+=2)
+        string asset=enemy?"raider":type switch
         {
-            var w=Box(root,new Vector3(wing/2,0.8f,10),new Vector3(i*wing/3,0,3),armor);w.RotationDegrees=new Vector3(0,i*12,-i*7);
-            Wedge(root,new Vector3(i*wing/2,1,5),new Vector3(3,4,12),dark);
-            Ball(root,1.1f,new Vector3(i*wing/2,0.8f,11),trim,true);
-            Box(root,new Vector3(.7f,.6f,8),new Vector3(i*6,-1,-7),dark);
-            Box(root,new Vector3(1,.1f,6),new Vector3(i*5,2,2),trim,true);
-            if(type=="bomber") Box(root,new Vector3(4,3,12),new Vector3(i*7,-3,2),"465963");
-        }
-        return root;
+            "light"=>"kestrel",
+            "medium"=>"vanguard",
+            "bomber"=>"atlas",
+            _=>throw new ArgumentOutOfRangeException(nameof(type),type,"Unknown fighter model")
+        };
+        return ImportedModel(parent,$"res://Assets/Models/{asset}_fleet_a.glb",char.ToUpperInvariant(asset[0])+asset[1..]+"FleetA");
     }
     public static Node3D Carrier(Node3D parent,bool enemy)
-    {
-        var root=new Node3D(); parent.AddChild(root);
-        string armor=enemy?"483440":"526571",dark="17202c",glow=enemy?"ff7257":"67d9e9";
-        Wedge(root,new Vector3(0,-20,0),new Vector3(150,80,580),armor);
-        Box(root,new Vector3(104,5,490),new Vector3(0,25,-5),dark);
-        for(int i=-1;i<=1;i+=2)
-        {
-            Wedge(root,new Vector3(i*81,9,35),new Vector3(35,70,460),armor);
-            Box(root,new Vector3(3,2,440),new Vector3(i*45,29,0),glow,true);
-            for(int j=0;j<8;j++)
-            {
-                Box(root,new Vector3(9,.5f,11),new Vector3(i*35,29,-180+j*50),"e1ddbc",true);
-                Box(root,new Vector3(14,8,24),new Vector3(i*105,15,-180+j*50),dark);
-            }
-            Box(root,new Vector3(23,15,22),new Vector3(i*45,-15,275),glow,true);
-        }
-        Wedge(root,new Vector3(65,69,90),new Vector3(54,75,100),armor);
-        Box(root,new Vector3(42,5,11),new Vector3(65,91,42),glow,true);
-        Box(root,new Vector3(3,45,3),new Vector3(70,125,100),dark);
-        Box(root,new Vector3(52,38,8),new Vector3(0,8,245),"080f18");
-        return root;
-    }
+        =>ImportedModel(parent,enemy?"res://Assets/Models/tyrant_fleet_a.glb":"res://Assets/Models/resolute_fleet_a.glb",enemy?"TyrantFleetA":"ResoluteFleetA");
     public static Node3D Cockpit(Node3D player)
         =>ImportedModel(player,"res://Assets/Models/cockpit_fleet_a.glb","FleetCockpit");
     public static void Universe(Node3D root,int seed)

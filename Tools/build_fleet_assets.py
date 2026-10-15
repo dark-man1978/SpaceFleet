@@ -146,6 +146,142 @@ def fighter():
  for i in range(5):m.box([0,1.39,1.0+i*.38],[.85,.06,.13],'edge',.02)
  return m
 
+def engine(m,x,y,z,r=1,enemy=False):
+ """Recessed exhaust with a dark collar and a smaller emissive core."""
+ m.pipe([x,y,z-.7*r],[x,y,z],r,'metal',16,r2=r*.92)
+ m.pipe([x,y,z+.01],[x,y,z+.06*r],r*.76,'dark',16)
+ m.pipe([x,y,z+.07*r],[x,y,z+.09*r],r*.54,'red_glow' if enemy else 'blue_glow',16)
+
+def canopy(m,width,height,z0,z1):
+ pts=[(-width*.8,.7,z0),(width*.8,.7,z0),(-width,.7,z1),(width,.7,z1),
+      (-width*.5,height,z0+1),(width*.5,height,z0+1),(-width*.65,height,z1-1),(width*.65,height,z1-1)]
+ m.hull(pts,'glass')
+ for a,b in [(0,1),(0,4),(1,5),(4,5),(4,6),(5,7),(6,7),(2,6),(3,7),(2,3),(0,2),(1,3)]:m.beam(pts[a],pts[b],.11,'edge')
+
+def vanguard():
+ m=Model('SF24_Vanguard_Flotte_A')
+ m.hull([(-.5,-.5,-11),(.5,-.5,-11),(-.4,.3,-11),(.4,.3,-11),
+         (-2.1,-1.1,-1),(2.1,-1.1,-1),(-1.7,1,-1),(1.7,1,-1),
+         (-2,-1,9),(2,-1,9),(-1.7,1.1,9),(1.7,1.1,9)],'armor_light')
+ canopy(m,1.15,2.2,-7,-.4)
+ m.box([0,-1.05,-1],[2,.5,16],'slate',.16)
+ for side in [-1,1]:
+  # Broad diamond wing planform, distinct from the narrow Kestrel.
+  m.plate([(side*1.4,-5),(side*3.6,-3.4),(side*10.4,3.2),(side*6.5,8),(side*1.5,7)],0,.7,'slate')
+  m.plate([(side*2,-3.9),(side*3.3,-2.8),(side*9.5,3.2),(side*6.1,7.2),(side*2,6.5)],.4,.12,'armor')
+  m.plate([(side*6.9,1.2),(side*7.45,1.7),(side*7.4,5.6),(side*6.9,6.2)],.49,.025,'yellow')
+  m.box([side*3.5,0,4.4],[2.8,2.5,9.3],'edge',.4)
+  m.box([side*3.5,1.28,3.7],[2.1,.18,6.9],'armor_light',.06)
+  m.box([side*3.5,.1,-.35],[1.8,1.4,.12],'dark',.03)
+  for i in range(5):m.box([side*3.5-.7+i*.35,.1,-.43],[.09,1.1,.15],'metal',.02)
+  engine(m,side*3.5,0,9.5,1.2)
+  m.box([side*6.3,-.6,1.1],[1,.9,4.4],'slate',.18)
+  m.pipe([side*6.3,-.6,-1],[side*6.3,-.6,-5],.23,'metal',12)
+  m.box([side*2.8,-1.5,2.5],[1.2,1.1,5],'edge',.18)
+  for z in [1,3.3]:m.box([side*2.8,-2.07,z],[.8,.07,1.6],'dark',.02)
+  for z in [1,2,3,4]:m.box([side*2,.95,z],[.5,.1,.25],'dark',.025)
+  m.box([side*9.2,.5,3.3],[.17,.1,.5],'amber_glow',.02)
+ m.hull([(-.18,1,3),(.18,1,3),(-.16,1,8.5),(.16,1,8.5),(-.1,4,7),(.1,4,7),(-.1,3.7,5.8),(.1,3.7,5.8)],'slate')
+ m.beam([0,1.3,3.7],[0,3.6,6.3],.15,'yellow')
+ return m
+
+def atlas():
+ m=Model('SB8_Atlas_Flotte_A')
+ # Blunt armored center hull and a broad twin-pod bomber silhouette.
+ m.hull([(-1.8,-.9,-12),(1.8,-.9,-12),(-1.3,.8,-12),(1.3,.8,-12),
+         (-2.8,-1.5,-3),(2.8,-1.5,-3),(-2.4,1.3,-3),(2.4,1.3,-3),
+         (-2.5,-1.5,10),(2.5,-1.5,10),(-2.2,1.3,10),(2.2,1.3,10)],'armor_light')
+ canopy(m,1.55,2.7,-9,-2.5)
+ m.box([0,-1.6,0],[3.4,.7,18],'edge',.2)
+ for side in [-1,1]:
+  m.plate([(side*2,-4),(side*12,-1),(side*12,6),(side*3,9)],-.1,1.1,'slate')
+  m.plate([(side*3,-3),(side*10.8,-.5),(side*10.8,5.5),(side*3,7.8)],.52,.18,'armor')
+  m.box([side*8.1,.3,2.1],[4.1,3.7,16.8],'slate',.6)
+  for z in [-3.6,.4,4.4]:m.box([side*8.1,2.2,z],[3.3,.2,3.6],'armor_light',.07)
+  m.box([side*8.1,.4,-6.4],[2.8,2,.2],'dark',.06)
+  for i in range(5):m.box([side*8.1-1.1+i*.55,.4,-6.55],[.1,1.7,.18],'metal',.02)
+  engine(m,side*8.1,.2,11.1,1.7)
+  # Visible paired torpedo bays, with recessed armored doors.
+  m.box([side*4.4,-1.7,1.2],[2.5,2.5,12.8],'edge',.3)
+  m.box([side*4.4,-3,1.2],[2.1,.12,11.3],'dark',.04)
+  for z in [-2.5,1.2,4.9]:
+   m.box([side*4.4,-3.1,z],[1.8,.12,3.3],'armor',.04)
+   m.box([side*4.4,-3.18,z],[.1,.03,2.9],'yellow',.01)
+  m.pipe([side*2.3,-.6,-8],[side*2.3,-.6,-13],.27,'metal',12)
+  m.hull([(side*x,y,z) for x,y,z in [(8,2,4),(8.3,2,10),(9.4,5,9),(9,4.5,6),(8.2,2,4),(8.5,2,10),(9.6,5,9),(9.2,4.5,6)]],'armor')
+  m.box([side*8.1,2.36,-3],[2,.07,.7],'yellow',.02)
+  for z in [1,2,3,4]:m.box([side*1.8,1.42,z],[.65,.12,.35],'dark',.03)
+ m.box([0,1.5,3],[2,.4,5],'slate',.12)
+ return m
+
+def raider():
+ m=Model('Raider_Flotte_A')
+ m.hull([(0,0,-10),(-1.6,-1,0),(1.6,-1,0),(-1.4,1,0),(1.4,1,0),(-1.5,-.8,8),(1.5,-.8,8),(-1.3,.8,8),(1.3,.8,8)],'enemy_armor')
+ canopy(m,.9,1.65,-5,0)
+ for side in [-1,1]:
+  # Forward swept hooked wings and downward fins identify the hostile faction.
+  m.plate([(side*1.1,1),(side*4.5,-2),(side*8.5,-7),(side*9.6,-5.4),(side*7.5,4),(side*1.3,6)],-.2,.65,'enemy_dark')
+  m.plate([(side*2.1,1),(side*5,-1.6),(side*8.5,-5.8),(side*7,3),(side*2.1,5)],.17,.12,'enemy_armor')
+  m.beam([side*7.8,.28,-4.7],[side*6.8,.28,1.6],.15,'enemy_mark')
+  m.box([side*2.3,0,4.3],[2.2,2.4,7],'enemy_dark',.35)
+  engine(m,side*2.3,0,8.2,1.05,True)
+  m.pipe([side*7.8,-.4,-3],[side*7.8,-.4,-7.6],.21,'metal',12)
+  m.hull([(side*x,y,z) for x,y,z in [(3,0,4),(3,0,7),(4,-3.2,6),(4.2,-3,5),(3.2,0,4),(3.2,0,7),(4.2,-3.2,6),(4.4,-3,5)]],'enemy_armor')
+  for z in [1,2,3]:m.box([side*1.4,1,z],[.45,.12,.3],'enemy_mark',.02)
+ return m
+
+def carrier(enemy=False):
+ m=Model('RNS_Tyrant_Flotte_A' if enemy else 'SFS_Resolute_Flotte_A')
+ armor='enemy_armor' if enemy else 'armor';light='enemy_armor' if enemy else 'armor_light';dark='enemy_dark' if enemy else 'edge';mark='enemy_mark' if enemy else 'yellow';glow='red_glow' if enemy else 'blue_glow'
+ # Full-length open launch deck stays below the existing launch and landing path.
+ m.hull([(-38,-48,-288),(38,-48,-288),(-53,17,-288),(53,17,-288),
+         (-73,-55,170),(73,-55,170),(-74,19,170),(74,19,170),
+         (-55,-36,284),(55,-36,284),(-56,18,284),(56,18,284)],armor)
+ m.box([0,23,-5],[102,6,490],'dark',1.5)
+ for z in range(-220,231,30):
+  m.box([0,26.15,z],[1.4,.12,12],'white_glow',.02)
+  for side in [-1,1]:m.box([side*34,26.2,z],[9,.13,1.4],mark,.04)
+ for side in [-1,1]:
+  # Segmented armored outriggers, broken by recessed service seams.
+  m.box([side*82,-1,27],[39,65,458],dark,6)
+  for z in range(-170,221,65):
+   m.box([side*82,31,z],[33,4,58],light,1)
+   m.box([side*102,3,z],[3,43,57],armor,1)
+   m.box([side*104,3,z],[1.2,21,35],'dark',.5)
+   for dz in [-10,0,10]:m.box([side*105,3,z+dz],[1,16,2],'metal',.2)
+  m.box([side*48,27,0],[1.4,1,436],glow,.15)
+  for z in range(-195,231,35):m.box([side*54,28,z],[3,2,6],'white_glow',.3)
+  for z in [-140,15,160]:
+   m.box([side*116,15,z],[27,10,32],dark,2)
+   m.pipe([side*116,20,z],[side*116,28,z],7,armor,12)
+   m.box([side*116,30,z],[15,6,16],armor,1)
+   for x in [-4,4]:m.pipe([side*116+x,30,z-5],[side*116+x,30,z-22],1.2,'metal',8)
+  for y in [-26,1]:engine(m,side*36,y,286,12,enemy)
+  for z in [-225,240]:m.box([side*81,34,z],[24,1,6],mark,.3)
+ # Starboard island, armored command bridge, sensor mast and antenna bars.
+ m.box([75,53,98],[42,45,103],dark,4)
+ m.hull([(51,69,37),(99,69,37),(55,103,65),(95,103,65),(51,69,145),(99,69,145),(55,103,133),(95,103,133)],light)
+ m.box([75,88,48],[35,5,2],glow,.3)
+ for x in [61,68,75,82,89]:m.box([x,88,46.8],[.9,5.2,.8],dark,.1)
+ m.box([75,104,100],[24,3,45],armor,.5)
+ m.pipe([78,105,108],[78,145,108],1.5,'metal',8)
+ m.beam([58,132,108],[98,132,108],2,dark)
+ for x in [58,98]:m.box([x,135,108],[2,8,5],glow,.4)
+ m.box([0,3,286],[43,25,2],'dark',.5)
+ for side in [-1,1]:m.box([side*23,3,287],[1,22,1],mark,.1)
+ # Hostile generator pedestals exactly match Game.Activate's subsystem mounts.
+ if enemy:
+  m.hull([(-38,-48,-280),(38,-48,-280),(-53,17,-280),(53,17,-280),
+          (-12,-25,-330),(12,-25,-330),(-12,8,-330),(12,8,-330)],armor)
+  for side in [-1,1]:
+   m.plate([(side*98,40),(side*151,110),(side*133,213),(side*98,235)],-8,16,dark)
+   m.plate([(side*102,53),(side*141,113),(side*126,201),(side*102,221)],1,2,armor)
+   m.beam([side*107,3,80],[side*137,3,117],2,mark)
+   m.beam([side*91,23,-110],[side*125,54,-110],10,dark)
+   m.pipe([side*125,48,-110],[side*125,60,-110],15,armor,16)
+   m.pipe([side*125,60,-110],[side*125,61,-110],12,glow,16)
+ return m
+
 def cockpit():
  m=Model('Kestrel_Flotte_A_Cockpit')
  tangent=math.tan(math.radians(40))
@@ -188,5 +324,12 @@ def cockpit():
  return m
 
 if __name__=='__main__':
+ PALETTE.update({'enemy_armor':('65515b',.25,.65),'enemy_dark':('27252e',.25,.67),
+                 'enemy_mark':('bd6a53',.2,.65),'red_glow':('ed7259',0,.5)})
  fighter().write('kestrel_fleet_a.glb')
  cockpit().write('cockpit_fleet_a.glb')
+ vanguard().write('vanguard_fleet_a.glb')
+ atlas().write('atlas_fleet_a.glb')
+ raider().write('raider_fleet_a.glb')
+ carrier().write('resolute_fleet_a.glb')
+ carrier(True).write('tyrant_fleet_a.glb')

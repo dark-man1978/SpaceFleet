@@ -1,5 +1,15 @@
 # Änderungen
 
+## 0.3.0 — Vollständige Flotte A
+
+- Neue GLB-Außenmodelle für Vanguard, Atlas, Raider, Resolute und Tyrant.
+- Unterschiedliche Schiffssilhouetten, segmentierte Panzerung, Triebwerksauslässe, Torpedoschächte, Flugdeckmarkierungen und Kommandobrücken.
+- Feindträger mit eigenem Bug und seitlichen Panzerflügeln; Schildgeneratoren bleiben an den bisherigen Zielpositionen.
+- Zusammengefasste Materialflächen, texturfreie Geometrie und reproduzierbarer Generator.
+- Automatisierte GLB-Prüfung einschließlich Startkorridor, erweiterte Integrationsprüfungen und neue echte Spielaufnahmen.
+- Gut sichtbare deutsch- und englischsprachige Kennzeichnung als KI-generiertes Projekt.
+- Waffenwerte, Flugmodelle und Missionsregeln unverändert.
+
 ## 0.2.0 — Flotte A, erster Grafikschritt
 
 - Eigenes Kestrel-GLB-Modell mit facettierten Panzerplatten, gepfeilten Flügeln, Kanzelrahmen, Triebwerksauslässen, Wartungsdetails und zurückhaltenden gelben Markierungen.

@@ -30,6 +30,7 @@ public partial class Game : Node3D
     public int BestKills,Completed;
     public float BestTime;
     public bool Muted;
+    public string ShowroomTitle="";
     private Node3D actors=null!,universe=null!,cockpit=null!,homeModel=null!;
     private float cinematic,menuTime,stageClearTimer,damageWarning;
     private bool outcomeRecorded;
@@ -394,8 +395,12 @@ public partial class Game : Node3D
         Check(InputMap.ActionGetEvents("warhead").Any(e=>e is InputEventJoypadButton b&&b.ButtonIndex==JoyButton.RightShoulder),"controller shoulder binding");
         Check(ResourceLoader.Exists("res://Assets/Models/kestrel_fleet_a.glb"),"fleet fighter imported");
         Check(ResourceLoader.Exists("res://Assets/Models/cockpit_fleet_a.glb"),"fleet cockpit imported");
-        var fleet=Spawn("light",true,new Vector3(100,0,-100));
-        Check(fleet.Model!=null&&fleet.Model.Name=="KestrelFleetA","fighter uses new GLB scene");
+        foreach(var entry in new[]{("light",true,"KestrelFleetA"),("medium",true,"VanguardFleetA"),("bomber",true,"AtlasFleetA"),("enemy",false,"RaiderFleetA"),("carrier",false,"TyrantFleetA")})
+        {
+            var fleet=Spawn(entry.Item1,entry.Item2,new Vector3(100,0,-100));
+            Check(fleet.Model!=null&&fleet.Model.Name==entry.Item3,"ship uses its assigned fleet GLB: "+entry.Item3);
+        }
+        Check(homeModel.Name=="ResoluteFleetA","home carrier uses fleet GLB");
         Check(cockpit.Name=="FleetCockpit","cockpit uses new GLB scene");
         GD.Print($"SELF TEST PASS: {checks} checks");GetTree().Quit(0);
     }
@@ -415,13 +420,32 @@ public partial class Game : Node3D
                     Activate(Plan.Points[NavIndex]);Player.Target=EnemyCarrier;Player.Lock=3;
                     Camera.GlobalTransform=Player.GlobalTransform;
                 }
-                if(mode=="fleet-model")
+                if(mode=="fleet-model"||mode=="fleet-vanguard"||mode=="fleet-atlas"||mode=="fleet-raider"||mode=="fleet-resolute"||mode=="fleet-tyrant")
                 {
                     Paused=true;cockpit.Visible=false;Hud.ClearMenu();Phase=GamePhase.Launch;
+                    homeModel.Visible=false;
+                    ShowroomTitle=mode switch { "fleet-vanguard"=>"SF-24 VANGUARD", "fleet-atlas"=>"SB-8 ATLAS", "fleet-raider"=>"RAIDER ABFANGJÄGER", "fleet-resolute"=>"SFS RESOLUTE", "fleet-tyrant"=>"RNS TYRANT", _=>"SF-12 KESTREL" };
                     Player.GlobalPosition=new Vector3(0,0,-2000);Player.Basis=Basis.Identity;
+                    Node3D subject=Player;
+                    float distance=1;
+                    if(mode!="fleet-model")
+                    {
+                        Player.Model!.Visible=false;
+                        subject=mode switch
+                        {
+                            "fleet-vanguard"=>Visuals.Fighter(actors,"medium",false),
+                            "fleet-atlas"=>Visuals.Fighter(actors,"bomber",false),
+                            "fleet-raider"=>Visuals.Fighter(actors,"enemy",true),
+                            "fleet-resolute"=>Visuals.Carrier(actors,false),
+                            _=>Visuals.Carrier(actors,true)
+                        };
+                        subject.GlobalPosition=Player.GlobalPosition;
+                        if(mode=="fleet-resolute"||mode=="fleet-tyrant")distance=22;
+                    }
                     Camera.Fov=45;
-                    Camera.GlobalPosition=Player.GlobalPosition+new Vector3(19,12,-24);
-                    Camera.LookAt(Player.GlobalPosition+new Vector3(0,0,-1));
+                    Camera.GlobalPosition=subject.GlobalPosition+new Vector3(24,17,-30)*distance;
+                    Camera.LookAt(subject.GlobalPosition+new Vector3(0,distance>1?10:0,-1));
+
                 }
             }
         }

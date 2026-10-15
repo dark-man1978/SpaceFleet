@@ -105,6 +105,7 @@ public partial class Hud : Control
     public override void _Draw()
     {
         DrawSetTransform(Vector2.Zero,0,Size/new Vector2(1280,800));
+        if(Game.ShowroomTitle!=""){Text(60,65,Game.ShowroomTitle,28);Text(60,755,"SPACE FLEET 0.3 / FLOTTE A / ECHTE SPIELGRAFIK",16,dim);return;}
         if(Game.Phase==GamePhase.Flight||Game.Phase==GamePhase.Launch||Game.Phase==GamePhase.Landing)DrawFlight();
         if(screen!="")DrawMenu();
     }
@@ -120,7 +121,7 @@ public partial class Hud : Control
         Text(70,67,"SFS RESOLUTE  /  FLUGDECK 07",16,cyan);
         Text(70,140,"SPACE FLEET",56);
         Text(73,178,"GRENZSEKTOR  /  2186",18,dim);
-        Text(70,765,"STEAM DECK  •  COCKPIT COMBAT  •  PROTOTYP 0.2 / FLOTTE A",14,dim);
+        Text(70,765,"STEAM DECK  •  COCKPIT COMBAT  •  PROTOTYP 0.3 / FLOTTE A",14,dim);
         if(screen=="menu")
         {
             Text(70,220,"WÄHLE DEINEN EINSATZ",16,gold);
