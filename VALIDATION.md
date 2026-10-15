@@ -4,13 +4,16 @@ Stand: 15. Oktober 2026.
 
 ## Lokal ausgeführt
 
-- C#-Kompilierung mit .NET SDK 8.0.414 / Roslyn und Godot-4.5-Quellgenerator.
+- C#-Kompilierung mit .NET SDK 8.0.414, regulärem MSBuild und Godot.NET.Sdk 4.5.0; zusätzliche direkte Roslyn-Kompilierung für die Bildprüfung.
+- Selbstständige Linux-x86_64-Veröffentlichung mit .NET-Laufzeit über MSBuild/Publish. Godot-4.5-.NET-Release-Export des Ressourcenpakets; die selbstständig veröffentlichten .NET-Dateien wurden anschließend in den vorgesehenen Datenordner übernommen.
+- Start der exportierten Anwendung ohne DOTNET_ROOT und ohne Godot-Editor: **3.357 bestandene Prüfungen auch im nativen Linux-Spielpaket.**
 - Erfolgreicher Godot-Import aller sieben GLB-Modelle.
 - **3.357 bestandene automatisierte Spielprüfungen** im Quellprojekt. Dazu gehören 300 generierte Missionen, reproduzierbare Routen, Schiffszuteilung, Trefferberechnung, Schilde, Torpedoverbrauch und -treffer, alle drei Missionsabläufe bis zum Rückflug bzw. zur Landesequenz sowie die Niederlage bei Verlust der eskortierten Bomber.
 - Modellintegration für Kestrel, Vanguard, Atlas, Raider, Tyrant, Resolute und Cockpit geprüft.
 - `Tools/check_fleet_assets.py`: sieben gültige GLB-Dateien; endliche Koordinaten, passende Normalen, gültige Binärbereiche, Dreiecks-/Materialbudgets und freier Startkorridor der Resolute.
 - Alle sieben Modelle zweimal erzeugt und die SHA-256-Werte verglichen: byte-identische Ausgabe.
 - Reale OpenGL-Darstellung mit Mesa llvmpipe im virtuellen X11-Display bei 1280 × 800: neue Außenmodelle und Cockpit geprüft. Die `fleet-vanguard.png`, `fleet-atlas.png`, `fleet-raider.png`, `fleet-resolute.png`, `fleet-tyrant.png` und `fleet-cockpit.png` unter `docs/screenshots` zeigen Version 0.3 direkt aus Godot.
+- Grafikprüfung aus der exportierten Anwendung: Resolute-Aufnahme erfolgreich; zusätzlicher OpenGL-Smoke-Test über 480 Frames einschließlich Übergang vom Trägerstart zum Cockpit.
 - `git diff --check` ohne Fehler.
 
 ## Release-Prüfung
@@ -35,7 +38,7 @@ Keine externen Texturen oder Modellpakete. Die Generatorskripte und Modelle steh
 
 Ein echtes Steam Deck, reale Controllerhardware, Steam-Gaming-Modus, ausführliche Spielbalance und lange Kampfsitzungen wurden hier nicht geprüft. Die Zielbildrate ist deshalb noch nicht nachgewiesen. Trefferkörper bleiben vereinfachte Kugeln. Die sichtbaren Geschütztürme sind statische Modellteile, keine separat simulierten Waffen.
 
-Im lokalen Editor kann die eingeschränkte Prozessumgebung die MSBuild-Erkennung verhindern; deshalb wurde lokal zusätzlich direkt mit dem Godot-Quellgenerator kompiliert. Der reguläre SDK-Build wird im Release-Workflow geprüft. Godot meldet gelegentlich `ObjectDB instances leaked at exit`; ein Langzeit-Speicherprofil steht aus. Der virtuelle Grafiktreiber unterstützt keinen VSync-Wechsel.
+Im lokalen Editor verhindert die eingeschränkte Prozessumgebung gelegentlich den Aufruf von `dotnet publish`. Der reguläre SDK-Build und Publish wurden deshalb direkt über MSBuild ausgeführt; die veröffentlichten Dateien wurden im Export-Datenordner zusammengeführt und dort erneut getestet. Der bestehende GitHub-Workflow baut außerhalb dieser lokalen Einschränkung mit den üblichen Godot-Exportbefehlen. Godot meldet gelegentlich `ObjectDB instances leaked at exit`; ein Langzeit-Speicherprofil steht aus. Der virtuelle Grafiktreiber unterstützt keinen VSync-Wechsel.
 
 ## Reproduzieren
 
