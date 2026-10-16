@@ -10,6 +10,10 @@ Ein Einzelspieler-Weltraumkampfspiel in Godot 4.5 mit C#, ausgelegt auf Steam De
 
 Der Quellcode steht unter der [MIT-Lizenz](LICENSE).
 
+**Version 0.3:** [Spiel herunterladen](https://github.com/dark-man1978/SpaceFleet/releases/download/v0.3.0/SpaceFleet-SteamDeck-Spiel.zip) · [Demo-Video ansehen / herunterladen](https://github.com/dark-man1978/SpaceFleet/releases/download/v0.3.0/SpaceFleet-0.3-Demo.mp4)
+
+Das Video zeigt echte Modellansichten und einen automatisierten Demoflug mit Szenenwechseln, aufgenommen direkt in Godot.
+
 ## Neu in Version 0.3
 
 Die Flotte hat jetzt einheitliche GLB-Außenmodelle für **alle drei Spielerschiffe, den Raider-Abfangjäger und beide Träger**. Das Cockpit aus Version 0.2 bleibt erhalten.
@@ -189,7 +193,7 @@ Der eigene Quellcode und die prozeduralen Inhalte stehen unter der [MIT-Lizenz](
 
 ## Automatische GitHub-Releases
 
-Der bestehende Workflow unter `.github/workflows/release.yml` bleibt unverändert. Neue Versionen werden über „Actions → Build and publish Steam Deck release → Run workflow“ mit dem passenden neuen Tag, für diese Ausgabe `v0.3.0`, gebaut und veröffentlicht. Dabei führt er die integrierten Tests aus und stellt das native Steam-Deck-Spiel als ZIP-Anhang bereit. Vorhandene Releases werden nicht überschrieben.
+Der Workflow unter `.github/workflows/release.yml` baut nach einem Push auf `main` Version `v0.3.0` und veröffentlicht das native Steam-Deck-Spiel, das Demo-Video und SHA-256-Prüfsummen als Release-Anhänge. Vorhandene Releases werden nicht überschrieben. Weitere Versionen können über „Actions → Build and publish Steam Deck release → Run workflow“ mit einem neuen Tag gestartet werden. Die bisherigen Workflow-Berechtigungen bleiben unverändert.
 
 Frühere Releases bleiben verfügbar. Der Workflow führt vor jeder neuen Veröffentlichung die Spielprüfungen sowohl im Quellprojekt als auch in der exportierten Linux-Anwendung aus.
 

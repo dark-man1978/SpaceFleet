@@ -8,7 +8,7 @@ on:
       tag:
         description: New release tag
         required: true
-        default: v0.2.0
+        default: v0.3.0
         type: string
 
 permissions:
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       GODOT_VERSION: 4.5
-      TAG: ${{ inputs.tag || 'v0.2.0' }}
+      TAG: ${{ inputs.tag || 'v0.3.0' }}
     steps:
       - uses: actions/checkout@v4
       - name: Check release
@@ -60,6 +60,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 Tools/check_fleet_assets.py
           dotnet build SpaceFleet.csproj
           "$GODOT_BIN" --headless --path . --editor --import --quit
           "$GODOT_BIN" --headless --path . --quit-after 600 -- --self-test | tee "$RUNNER_TEMP/self-test.log"
@@ -84,7 +85,9 @@ jobs:
           cp -a build/. dist/SpaceFleet/
           cp LICENSE README.md VALIDATION.md dist/SpaceFleet/
           cp -a Licenses dist/SpaceFleet/
+          cat docs/videos/SpaceFleet-0.3-Demo.mp4.part* > dist/SpaceFleet-0.3-Demo.mp4
+          echo 'da2d110d7ead5db84887796b87400060eb7b6340cb5f6681de2d78223d867169  dist/SpaceFleet-0.3-Demo.mp4' | sha256sum --check
           cd dist
           zip -q -r SpaceFleet-SteamDeck-Spiel.zip SpaceFleet
-          sha256sum SpaceFleet-SteamDeck-Spiel.zip > SHA256SUMS.txt
-          gh release create "$TAG" SpaceFleet-SteamDeck-Spiel.zip SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Space Fleet $TAG" --notes 'Steam Deck / SteamOS Linux x86_64 build. Includes the .NET runtime. Extract the entire archive, add SpaceFleet.x86_64 to Steam as a non-Steam game, use the Gamepad layout, and leave Proton disabled. AI-assisted Godot C# prototype, released under MIT. Third-party notices are included.'
+          sha256sum SpaceFleet-SteamDeck-Spiel.zip SpaceFleet-0.3-Demo.mp4 > SHA256SUMS.txt
+          gh release create "$TAG" SpaceFleet-SteamDeck-Spiel.zip SpaceFleet-0.3-Demo.mp4 SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Space Fleet $TAG" --notes 'Steam Deck / SteamOS Linux x86_64 build. Includes the .NET runtime. Extract the entire archive, add SpaceFleet.x86_64 to Steam as a non-Steam game, use the Gamepad layout, and leave Proton disabled. AI-generated Godot C# prototype with complete Fleet A ship models, released under MIT. Includes a demo video made from real engine captures. Third-party notices are included.'
