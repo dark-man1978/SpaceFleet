@@ -1,32 +1,37 @@
-name: Build and publish Steam Deck release
+name: Validate and optionally publish Steam Deck release
 
 on:
   push:
+    branches: [main, upgrade/godot-4.7]
+  pull_request:
     branches: [main]
   workflow_dispatch:
     inputs:
       tag:
         description: New release tag
         required: true
-        default: v0.3.0
+        default: v0.4.0
         type: string
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: space-fleet-release
+  group: space-fleet-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   release:
+    permissions:
+      contents: write
     runs-on: ubuntu-22.04
     env:
-      GODOT_VERSION: 4.5
-      TAG: ${{ inputs.tag || 'v0.3.0' }}
+      GODOT_VERSION: 4.7.2
+      TAG: ${{ inputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - name: Check release
+        if: github.event_name == 'workflow_dispatch'
         id: release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -39,24 +44,23 @@ jobs:
             echo 'exists=false' >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/setup-dotnet@v4
-        if: steps.release.outputs.exists == 'false'
         with:
           dotnet-version: '8.0.x'
       - name: Install Godot .NET and Linux export templates
-        if: steps.release.outputs.exists == 'false'
         shell: bash
         run: |
           set -euo pipefail
-          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          base="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable"
           curl --fail --location --retry 3 "$base/Godot_v${GODOT_VERSION}-stable_mono_linux_x86_64.zip" -o "$RUNNER_TEMP/godot.zip"
           curl --fail --location --retry 3 "$base/Godot_v${GODOT_VERSION}-stable_mono_export_templates.tpz" -o "$RUNNER_TEMP/templates.tpz"
+          echo '129f82db7bafd54ae14bb5bb284041c73860e8c7a009a3a026ca5e946cbff247  '"$RUNNER_TEMP/godot.zip" | sha256sum --check
+          echo '92f8681e349ef1f90891b792da95e3b2b0bd1ed610b78018c58feb2d87e15a9d  '"$RUNNER_TEMP/templates.tpz" | sha256sum --check
           unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
           templates="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable.mono"
           mkdir -p "$templates"
           unzip -j -q "$RUNNER_TEMP/templates.tpz" 'templates/linux_release.x86_64' 'templates/linux_debug.x86_64' -d "$templates"
           echo "GODOT_BIN=$RUNNER_TEMP/godot/Godot_v${GODOT_VERSION}-stable_mono_linux_x86_64/Godot_v${GODOT_VERSION}-stable_mono_linux.x86_64" >> "$GITHUB_ENV"
       - name: Build and test C# project
-        if: steps.release.outputs.exists == 'false'
         shell: bash
         run: |
           set -euo pipefail
@@ -66,7 +70,6 @@ jobs:
           "$GODOT_BIN" --headless --path . --quit-after 600 -- --self-test | tee "$RUNNER_TEMP/self-test.log"
           grep -q 'SELF TEST PASS:' "$RUNNER_TEMP/self-test.log"
       - name: Export and test Linux executable
-        if: steps.release.outputs.exists == 'false'
         shell: bash
         run: |
           set -euo pipefail
@@ -75,7 +78,7 @@ jobs:
           ./build/SpaceFleet.x86_64 --headless --quit-after 600 -- --self-test | tee "$RUNNER_TEMP/export-test.log"
           grep -q 'SELF TEST PASS:' "$RUNNER_TEMP/export-test.log"
       - name: Package and publish
-        if: steps.release.outputs.exists == 'false'
+        if: github.event_name == 'workflow_dispatch' && steps.release.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash

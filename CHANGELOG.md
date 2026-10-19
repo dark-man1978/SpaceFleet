@@ -1,5 +1,11 @@
 # Änderungen
 
+## Unreleased — Godot 4.7
+
+- Upgrade auf verifiziertes Godot 4.7.2 .NET und passendes C#-SDK; Spielinhalt 0.3 bleibt erhalten.
+- Pull-Request-Prüfung mit Build, Asset-Import, Selbsttests und Linux-Export; Veröffentlichung nur nach manuellem Workflow-Start mit neuem Tag.
+- Validierung und offene Steam-Deck-/Grafiktests dokumentiert; `v0.3.0` bleibt als Rückfallversion erhalten.
+
 ## 0.3.0 — Vollständige Flotte A
 
 - Neue GLB-Außenmodelle für Vanguard, Atlas, Raider, Resolute und Tyrant.

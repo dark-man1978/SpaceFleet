@@ -1,3 +1,43 @@
+# Validierung — Godot 4.7.2 .NET
+
+Stand: 19. Oktober 2026. Ausgangspunkt: `87ba1c2e5bcf421d0442969c64f62f7056cf7f1f` (`main` und `v0.3.0`). Der bestehende Release samt Tag und Dateien wurde nicht verändert.
+
+## Verifizierte Version
+
+- [Offizieller Download](https://godotengine.org/download/archive/4.7.2-stable/) und [GitHub-Release](https://github.com/godotengine/godot-builds/releases/tag/4.7.2-stable): 4.7.2-stable, veröffentlicht am 18. August 2026, kein Vorabrelease.
+- Lokal ausgeführte Binary: `4.7.2.stable.mono.official.ed1daf0bf`.
+- Linux-.NET-Editor SHA-256: `129f82db7bafd54ae14bb5bb284041c73860e8c7a009a3a026ca5e946cbff247`.
+- .NET-Exportvorlagen SHA-256: `92f8681e349ef1f90891b792da95e3b2b0bd1ed610b78018c58feb2d87e15a9d`.
+- Beide Downloads lokal gegen die offiziellen Asset-Digests geprüft; dieselben Prüfungen stehen im Workflow.
+
+## Kompatibilität und lokale Ergebnisse
+
+Alle acht C#-Dateien (Steuerung, Daten/Missionen, Spiel/Selbsttests, HUD, Projektile, Schiffe, Audio und Grafik) und die [Migrationshinweise 4.6](https://docs.godotengine.org/en/4.7/tutorials/migrating/upgrading_to_godot_4.6.html) / [4.7](https://docs.godotengine.org/en/4.7/tutorials/migrating/upgrading_to_godot_4.7.html) geprüft. Keine erforderlichen C#-API-Anpassungen gefunden; vollständige Neukompilierung gegen 4.7.2 statt Übernahme alter Assemblies. `net8.0`, Compatibility-Renderer, Steuerungsbelegung und Spielprofilpfad bleiben erhalten. Die sieben Modell-Importdateien enthalten die vom neuen Editor ergänzten Optionen.
+
+- .NET SDK 8.0.426 / Godot.NET.Sdk 4.7.2: Restore und Build erfolgreich, **0 Warnungen, 0 Fehler**.
+- `Tools/check_fleet_assets.py`: **7 gültige Modelle**.
+- Godot-4.7.2-.NET-Import erfolgreich.
+- Quellprojekt: **SELF TEST PASS: 3357 checks**.
+- Reguläres `build.sh`: Linux-x86_64-Export mit mitgelieferter .NET-Laufzeit erfolgreich, ohne manuelles Zusammenführen von Publish-Dateien.
+- Exportiertes Spiel: **SELF TEST PASS: 3357 checks**.
+- Headless-Smoke-Test des exportierten Spiels mit `--smoke-test` über 480 Frames.
+
+Die lokale Sandbox benötigt beschreibbare `DOTNET_CLI_HOME`, `NUGET_PACKAGES`, `XDG_CONFIG_HOME` und `XDG_DATA_HOME` im Arbeitsverzeichnis. NuGet benötigte dort seinen Migrationsmarker. Der Editor meldete bei Build/Export zusätzlich einen Fehler beim Erstellen seines ObjectDB-Snapshot-Verzeichnisses; der Export und die Tests waren trotzdem erfolgreich. Beim Beenden der Selbsttests bleibt eine ObjectDB-Leak-Warnung bestehen. Keine Grafik- oder Audioprüfung aus einem Headless-Lauf ableiten.
+
+## Vor Freigabe manuell prüfen
+
+- Steam Deck / SteamOS im Gaming-Modus: nativer Start ohne Proton, Controller inklusive Trigger, Fokus, Pause und Optionen.
+- Alle drei Missionstypen vollständig spielen: Start, Kampf, Rückflug/Landung, Debrief und Wiederholung.
+- Compatibility-Grafik bei 1280 × 800: Cockpit, sieben Modelle, HUD, Materialien, Effekte und Zielbildrate; aktuelle Screenshots mit der 4.5-Basis vergleichen.
+- Audio, Stummschaltung, vorhandenes `pilot.cfg`, Optionen und Bestleistungen nach Neustart.
+- Längere Kampfsitzung und Speicherprofil zur ObjectDB-Warnung.
+
+Der GitHub-Workflow prüft Build, Import und beide Selbsttestläufe auch bei vorhandenem 0.3-Release. Pushes/PRs veröffentlichen nichts. Der manuelle Release-Schritt erzeugt nur einen noch nicht vorhandenen Release.
+
+---
+
+Die folgenden Ergebnisse dokumentieren ausschließlich die bisherige Godot-4.5-Version:
+
 # Validierung — Space Fleet 0.3
 
 Stand: 15. Oktober 2026.

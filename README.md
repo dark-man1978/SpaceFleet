@@ -6,7 +6,7 @@
 >
 > Space Fleet was created with ChatGPT / OpenAI Codex from human-provided requirements. Its source code, procedural 3D models and project documentation were generated and revised using generative AI. The project owner provides the game concept, requirements and feedback.
 
-Ein Einzelspieler-Weltraumkampfspiel in Godot 4.5 mit C#, ausgelegt auf Steam Deck / SteamOS (Linux x86_64) und normale Gamepads. Eigene Schiffe und Spielwelt, inspiriert von klassischen Träger-basierten Raumkampfsimulationen.
+Ein Einzelspieler-Weltraumkampfspiel in Godot 4.7.2 mit C#, ausgelegt auf Steam Deck / SteamOS (Linux x86_64) und normale Gamepads. Eigene Schiffe und Spielwelt, inspiriert von klassischen Träger-basierten Raumkampfsimulationen.
 
 Der Quellcode steht unter der [MIT-Lizenz](LICENSE).
 
@@ -124,11 +124,17 @@ Die beiden Schildgeneratoren des Feindträgers können separat anvisiert werden.
 
 Die Flügel-KI folgt, kämpft, schützt Bomber und greift ausgewählte Gegner an. Bomber verfolgen am Hauptziel ihren Torpedoauftrag. Zum Missionsende schließt der Flügel wieder zum Spieler auf.
 
+## Godot-4.7-Upgrade
+
+Dieser Entwicklungsstand verwendet **Godot 4.7.2 .NET** und `Godot.NET.Sdk/4.7.2`; das Spiel bleibt inhaltlich Version 0.3. Der veröffentlichte [Release v0.3.0](../../releases/tag/v0.3.0) und sein Tag bleiben als Godot-4.5-Rückfallversion erhalten. Für einen Rückwechsel einen separaten Checkout von `v0.3.0` mit Godot 4.5 verwenden; den 4.7-Importcache nicht übernehmen. Die vorhandenen Bilder und das Demovideo stammen weiterhin aus 0.3 unter Godot 4.5.
+
+Build, Asset-Import, Selbsttests und Linux-Export werden bei Pull Requests und Änderungen an `main` geprüft. Eine Veröffentlichung erfolgt nur über den manuellen Workflow mit einem neuen Tag (Vorschlag: `v0.4.0`); vorhandene Releases werden übersprungen. Ergebnisse und noch offene Hardwareprüfungen stehen in [VALIDATION.md](VALIDATION.md).
+
 ## Projekt öffnen und ändern
 
 Voraussetzungen für den **Quellcode**, nicht für die kompilierte Version:
 
-- Godot **4.5 .NET / C#**, einschließlich passender .NET-Exportvorlagen.
+- Godot **4.7.2 .NET / C#**, einschließlich passender .NET-Exportvorlagen.
 - .NET **8 SDK** oder eine kompatible neuere SDK-Version mit .NET-8-Zielunterstützung.
 - Für den ersten Restore eine Internetverbindung zum NuGet-Paketfeed.
 
@@ -184,8 +190,8 @@ Das Projekt zielt auf Steam Deck. Die Bildrate, reale Controllerbedienung und da
 
 ## Referenzen
 
-- https://docs.godotengine.org/en/4.5/tutorials/scripting/c_sharp/c_sharp_basics.html
-- https://docs.godotengine.org/en/4.5/tutorials/export/exporting_for_linux.html
+- https://docs.godotengine.org/en/4.7/tutorials/scripting/c_sharp/c_sharp_basics.html
+- https://docs.godotengine.org/en/4.7/tutorials/export/exporting_for_linux.html
 
 ## Lizenz
 
